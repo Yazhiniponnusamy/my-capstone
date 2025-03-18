@@ -63,6 +63,14 @@
     {
       "name": "Scrum Team E",
       "id": 5
+    },
+    {
+      "name": "Scrum Team F",
+      "id": 6
+    },
+    {
+      "name": "Scrum Team G",
+      "id": 7
     }
   ],
   "tasks": [
@@ -124,49 +132,15 @@
       "title": "Task 4",
       "description": "Description for Task 4",
       "status": "To Do",
-      "scrumId": 4,
-      "assignedTo": "5",
+      "scrumId": 7,
+      "assignedTo": 4,
       "history": [
         {
-          "status": "Done",
-          "date": "2025-03-14"
-        },
-        {
-          "status": "In Progress",
-          "date": "2025-03-14"
-        },
-        {
           "status": "To Do",
-          "date": "2025-03-14"
+          "date": "2025-03-18"
         }
       ],
       "id": 4
-    },
-    {
-      "title": "Task 5",
-      "description": "Description for Task 5",
-      "status": "In Progress",
-      "scrumId": 5,
-      "assignedTo": "2",
-      "history": [
-        {
-          "status": "To Do",
-          "date": "2025-03-17"
-        },
-        {
-          "status": "To Do",
-          "date": "2025-03-17"
-        },
-        {
-          "status": "To Do",
-          "date": "2025-03-17"
-        },
-        {
-          "status": "In Progress",
-          "date": "2025-03-17"
-        }
-      ],
-      "id": 5
     }
   ]
 }

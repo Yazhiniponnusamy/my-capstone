@@ -30,13 +30,13 @@ const UserProfile = () => {
     const fetchTasks = async (userId) => {
         try {
             const response = await axios.get('http://localhost:4000/tasks');
-            // Ensure assignedTo matches the logged-in user correctly (handle both number & string)
-            const filteredTasks = response.data.filter(task => String(task.assignedTo) === String(userId));
+            const filteredTasks = response.data.filter(task => Number(task.assignedTo) === Number(userId)); // ✅ Ensure number comparison
             setTasks(filteredTasks);
         } catch (error) {
             console.error('Error fetching tasks:', error);
         }
     };
+    
 
     //  Auto-fetch tasks when an Employee logs in
     useEffect(() => {

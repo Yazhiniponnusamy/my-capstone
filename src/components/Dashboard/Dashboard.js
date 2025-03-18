@@ -54,10 +54,13 @@ const Dashboard = () => {
 
     const handleAddScrum = async (values, { resetForm, setSubmitting }) => {
         try {
+            // ✅ Convert `taskAssignedTo` to a number before saving
+            const assignedToNumber = Number(values.taskAssignedTo);
+
             const newScrumResponse = await axios.post('http://localhost:4000/scrums', {
                 name: values.scrumName,
             });
-            
+
             const newScrum = newScrumResponse.data;
 
             await axios.post('http://localhost:4000/tasks', {
@@ -65,7 +68,7 @@ const Dashboard = () => {
                 description: values.taskDescription,
                 status: values.taskStatus,
                 scrumId: newScrum.id,
-                assignedTo: values.taskAssignedTo,
+                assignedTo: assignedToNumber, // ✅ Ensure assignedTo is a number
                 history: [{ status: values.taskStatus, date: new Date().toISOString().split('T')[0] }],
             });
 
@@ -100,7 +103,7 @@ const Dashboard = () => {
                             validationSchema={validationSchema}
                             onSubmit={handleAddScrum}
                         >
-                            {({ isSubmitting }) => (
+                            {({ isSubmitting, setFieldValue }) => (
                                 <Form>
                                     <div>
                                         <label>Scrum Name:</label>
@@ -128,7 +131,11 @@ const Dashboard = () => {
                                     </div>
                                     <div>
                                         <label>Assign To:</label>
-                                        <Field as="select" name="taskAssignedTo">
+                                        <Field
+                                            as="select"
+                                            name="taskAssignedTo"
+                                            onChange={(e) => setFieldValue("taskAssignedTo", Number(e.target.value))} // ✅ Convert to number
+                                        >
                                             <option value="">Select a user</option>
                                             {users.map((user) => (
                                                 <option key={user.id} value={user.id}>
