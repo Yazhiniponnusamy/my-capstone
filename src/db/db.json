@@ -34,6 +34,13 @@
       "password": "password4",
       "role": "employee",
       "id": 5
+    },
+    {
+      "name": "employee5",
+      "email": "employee5@gmail.com",
+      "password": "password5",
+      "role": "employee",
+      "id": 6
     }
   ],
   "scrums": [
@@ -52,6 +59,10 @@
     {
       "name": "Scrum Team D",
       "id": 4
+    },
+    {
+      "name": "Scrum Team E",
+      "id": 5
     }
   ],
   "tasks": [
@@ -130,6 +141,32 @@
         }
       ],
       "id": 4
+    },
+    {
+      "title": "Task 5",
+      "description": "Description for Task 5",
+      "status": "In Progress",
+      "scrumId": 5,
+      "assignedTo": "2",
+      "history": [
+        {
+          "status": "To Do",
+          "date": "2025-03-17"
+        },
+        {
+          "status": "To Do",
+          "date": "2025-03-17"
+        },
+        {
+          "status": "To Do",
+          "date": "2025-03-17"
+        },
+        {
+          "status": "In Progress",
+          "date": "2025-03-17"
+        }
+      ],
+      "id": 5
     }
   ]
 }

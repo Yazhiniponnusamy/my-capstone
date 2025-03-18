@@ -11,28 +11,41 @@ const UserProfile = () => {
     const [showForm, setShowForm] = useState(false);
     const { user } = useContext(UserContext);
 
+    //  Fetch all users (only for Admin)
     useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const response = await axios.get('http://localhost:4000/users');
-                setUsers(response.data.filter(user => user.role !== 'admin')); 
-            } catch (error) {
-                console.error('Error fetching users:', error);
-            }
-        };
+        if (user?.role === 'admin') {
+            const fetchUsers = async () => {
+                try {
+                    const response = await axios.get('http://localhost:4000/users');
+                    setUsers(response.data.filter(user => user.role !== 'admin')); // Exclude admin
+                } catch (error) {
+                    console.error('Error fetching users:', error);
+                }
+            };
+            fetchUsers();
+        }
+    }, [user]);
 
-        fetchUsers();
-    }, []);
-
+    // Fetch tasks based on logged-in user role
     const fetchTasks = async (userId) => {
         try {
-            const response = await axios.get(`http://localhost:4000/tasks?assignedTo=${userId}`);
-            setTasks(response.data);
+            const response = await axios.get('http://localhost:4000/tasks');
+            // Ensure assignedTo matches the logged-in user correctly (handle both number & string)
+            const filteredTasks = response.data.filter(task => String(task.assignedTo) === String(userId));
+            setTasks(filteredTasks);
         } catch (error) {
             console.error('Error fetching tasks:', error);
         }
     };
 
+    //  Auto-fetch tasks when an Employee logs in
+    useEffect(() => {
+        if (user?.role === 'employee') {
+            fetchTasks(user.id);
+        }
+    }, [user]);
+
+    //  Fetch tasks when admin clicks "Get History"
     const handleGetHistory = (userId) => {
         setSelectedUser(users.find(user => user.id === userId));
         fetchTasks(userId);
@@ -41,13 +54,14 @@ const UserProfile = () => {
     return (
         <div>
             <h2>User Profiles</h2>
-            
+
+            {/*  Admin View: Can Add Users & See All Employees */}
             {user?.role === 'admin' && (
                 <div>
                     <button onClick={() => setShowForm(!showForm)}>
                         {showForm ? 'Cancel' : 'Add New User'}
                     </button>
-                    
+
                     {showForm && (
                         <Formik
                             initialValues={{
@@ -66,7 +80,7 @@ const UserProfile = () => {
                                 try {
                                     await axios.post('http://localhost:4000/users', values);
                                     const updatedUsers = await axios.get('http://localhost:4000/users');
-                                    setUsers(updatedUsers.data.filter(user => user.role !== 'admin'));
+                                    setUsers(updatedUsers.data.filter(user => user.role !== 'admin')); // Exclude admins
                                     setShowForm(false);
                                     resetForm();
                                 } catch (error) {
@@ -104,7 +118,8 @@ const UserProfile = () => {
                             )}
                         </Formik>
                     )}
-                    
+
+                    {/*  Admin View: List of Employees */}
                     <ul>
                         {users.map(user => (
                             <li key={user.id}>
@@ -117,17 +132,42 @@ const UserProfile = () => {
                 </div>
             )}
 
+            {/*  Employee View: Show Assigned Tasks */}
+            {user?.role === 'employee' && (
+                <div>
+                    <h3>Your Assigned Tasks</h3>
+                    <ul>
+                        {tasks.length > 0 ? (
+                            tasks.map(task => (
+                                <li key={task.id}>
+                                    <strong>Title:</strong> {task.title} <br />
+                                    <strong>Description:</strong> {task.description} <br />
+                                    <strong>Status:</strong> {task.status}
+                                </li>
+                            ))
+                        ) : (
+                            <p>No tasks assigned to you.</p>
+                        )}
+                    </ul>
+                </div>
+            )}
+
+            {/*  Admin View: Task History for Selected User */}
             {selectedUser && (
                 <div>
                     <h3>Tasks Assigned to {selectedUser.name}</h3>
                     <ul>
-                        {tasks.map(task => (
-                            <li key={task.id}>
-                                <strong>Title:</strong> {task.title} <br />
-                                <strong>Description:</strong> {task.description} <br />
-                                <strong>Status:</strong> {task.status}
-                            </li>
-                        ))}
+                        {tasks.length > 0 ? (
+                            tasks.map(task => (
+                                <li key={task.id}>
+                                    <strong>Title:</strong> {task.title} <br />
+                                    <strong>Description:</strong> {task.description} <br />
+                                    <strong>Status:</strong> {task.status}
+                                </li>
+                            ))
+                        ) : (
+                            <p>No tasks assigned to this user.</p>
+                        )}
                     </ul>
                 </div>
             )}
